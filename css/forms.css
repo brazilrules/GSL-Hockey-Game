@@ -1,0 +1,24 @@
+.formFields {
+	width: 100%;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.field {
+	width: 90%;
+	margin: 5%;
+}
+
+.field input {
+	position: relative;
+	float: right;
+	width: 60%;
+}
+
+.submitButton {
+	left: 50%;
+	transform: translateX(-50%);
+	position: absolute;
+	bottom: 10%;
+}

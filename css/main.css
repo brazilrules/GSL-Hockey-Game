@@ -1,0 +1,47 @@
+body {
+	background-color: black;
+	height: 100%;
+}
+
+.container {
+	width: 70%;
+	height: 50%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-right: -50%;
+	transform: translate(-50%, -50%);
+	border-radius: 8px;
+}
+
+#login {
+	background-color: white;
+}
+
+#login a {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+	text-decoration: underline;
+	color: blue;
+}
+
+#register {
+	background-color: lightgreen;
+	display: none;
+}
+
+#hockeyGame {
+	background-color: lightcyan;
+	display: none;
+}
+
+#teams {
+	margin-left: 50%;
+	transform: translateX(-50%);
+}
+
+#playerOfMatch {
+	margin-left: 50%;
+	transform: translateX(-50%);
+}
