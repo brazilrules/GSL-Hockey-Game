@@ -8,10 +8,7 @@ package com.mycompany.hockeygame.websocket;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -27,14 +24,20 @@ import javax.websocket.server.ServerEndpoint;
 @ApplicationScoped
 @ServerEndpoint("/hockeyGame")
 public class WebsocketServer {
-    private Map<Session, User> clients;
-    private String[] teams = new String[2];
-    private Map<Short, String> players;
+    private static Map<Session, User> clients;
+    private static String[] teams = new String[2];
+    private static Map<Short, String> players;
     
     @OnOpen
     public void open(Session session) {
         if(clients == null) clients = new HashMap<>();
         clients.put(session, null);
+        try {
+            session.getBasicRemote().sendText("open");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            clients.remove(session);
+        }
     }
     
     @OnClose
@@ -54,7 +57,7 @@ public class WebsocketServer {
         if (message.contains("email:")) {
             clients.put(session, new User(message.replace("email:", "")));
             return;
-        }
+            }
         
         if ("getTeams".equals(message)) {
             try {
@@ -96,9 +99,10 @@ public class WebsocketServer {
                         if(u.getGuessedTeam() == 1) {
                             s.getBasicRemote().sendText("100;" + teams[0]);
                             u.addPoints(100);
-                        } else {
+                        } else if(u.getGuessedTeam() == 2) {
                             s.getBasicRemote().sendText("0;" + teams[1]);
                         }
+                        u.setGuessedTeam((short)0);
                     } catch (IOException ex) {
                         ex.printStackTrace();
                         clients.remove(session);
@@ -115,9 +119,10 @@ public class WebsocketServer {
                         if(u.getGuessedTeam() == 2) {
                             s.getBasicRemote().sendText("100;" + teams[1]);
                             u.addPoints(100);
-                        } else {
+                        } else if(u.getGuessedTeam() == 1) {
                             s.getBasicRemote().sendText("0;" + teams[0]);
                         }
+                        u.setGuessedTeam((short)0);
                     } catch (IOException ex) {
                         ex.printStackTrace();
                         clients.remove(session);
@@ -130,9 +135,9 @@ public class WebsocketServer {
         if (message.contains("finalPlayer:")) {
             clients.forEach((s, u) -> {
                 if(u != null) {
-                    short player = Short.parseShort(message.replace("finalPlayer:", ""));
+                    String player = message.replace("finalPlayer:", "");
                     try {
-                        if(u.getPlayerOfMatch() == player) {
+                        if(String.valueOf(u.getPlayerOfMatch()).equals(player)) {
                             s.getBasicRemote().sendText("500;" + players.get(player));
                             u.addPoints(500);
                         } else {

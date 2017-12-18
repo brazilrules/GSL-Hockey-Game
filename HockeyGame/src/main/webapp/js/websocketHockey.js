@@ -1,15 +1,16 @@
-var websocket;
+var currentPoints = 0;
+var webSocket;
 
 function initWebsocket(email) {
-	webSocket = new WebSocket("ws://localhost:8080/hockeyGame");
+	webSocket = new WebSocket("ws://localhost:8080/HockeyGame/hockeyGame");
 	
-	websocket.onOpen = function() {
+	webSocket.onopen = function() {
 		webSocket.send(`email:${email}`);
 		webSocket.send("getTeams");
 		webSocket.send("getPlayers");
 	};
 	
-	websocket.onmessage = function(e) {
+	webSocket.onmessage = function(e) {
 		//implement handshake
 		
 		var points = parseInt(e.data);
@@ -18,8 +19,11 @@ function initWebsocket(email) {
 				currentPoints += points;
 				$('#message').html(`You guessed ${e.data.split(";")[1]} right and earned ${points} points`);
 			} else {
-				$('#message').html('You guessed ${e.data.split(";")[1]} wrong and earned 0 points');
+				$('#message').html(`You guessed ${e.data.split(";")[1]} wrong and earned 0 points`);
 			}
+                        setTimeout( function (){
+                            $('#message').html('');
+                        },3000);
 			return
 		}
 		
@@ -33,30 +37,30 @@ function initWebsocket(email) {
 		if(e.data.indexOf("players;") != -1) {
 			var players = JSON.parse(e.data.split(";")[1]);
 			for (let player in players) {
-				$('#playerOfMatch select').append(`<option value="${players[player]}">${player}</option>`);
+				$('#playerOfMatch select').append(`<option value="${player}">${players[player]}</option>`);
 			}
 		}
 	};
 	
-	websocket.onclose = function(e) {
+	webSocket.onclose = function(e) {
 		$('#message').html("The connection was lost. Please reload the page and login again to continue using.");
 	};
 }
 
 function sendTeamGuess(team) {
-	websocket.send(`guessTeam${team}`);
+	webSocket.send(`guessTeam${team}`);
 }
 
 function sendPlayerGuess() {
 	var player = $('#playerOfMatch select').val();
-	websocket.send(`guessPlayer:${player}`);
+	webSocket.send(`guessPlayer:${player}`);
 }
 
 $(document).ready(function() {
 	$(window).bind(
 		"beforeunload", 
 		function() { 
-			websocket.close();
+			webSocket.close();
 		}
 	);
 });

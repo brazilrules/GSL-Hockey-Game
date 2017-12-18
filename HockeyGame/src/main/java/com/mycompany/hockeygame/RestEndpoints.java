@@ -17,11 +17,11 @@ import javax.ws.rs.core.Response;
  *
  * @author leo_k
  */
-@Path("/")
+@Path("/hockey")
 public class RestEndpoints {
-    
+
     @GET
-    @Path("login/{email}/{password}")
+    @Path("/login/{email}/{password}")
     public Response checkLogin(@PathParam("email") String email, @PathParam("password") String password) {
         try {
             java.nio.file.Path path = Paths.get("/hockeyGame/Users/" + email);
@@ -38,13 +38,14 @@ public class RestEndpoints {
     }
     
     @GET
-    @Path("register/{email}/{password}")
+    @Path("/register/{email}/{password}")
     public Response register(@PathParam("email") String email, @PathParam("password") String password) {
         try {
             java.nio.file.Path path = Paths.get("/hockeyGame/Users/" + email);
             if (Files.exists(path)) {
                 return Response.status(200).entity("false").build();
             }
+            Files.createDirectories(path.getParent());
             Files.write(path, (password + "\n0").getBytes("UTF-8"));
             return Response.status(200).entity("true").build();
         } catch(Exception ex) {

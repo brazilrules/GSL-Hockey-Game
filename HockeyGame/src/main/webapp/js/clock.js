@@ -1,12 +1,12 @@
 var team1Score = 0;
 var team2Score = 0;
 
-$document.ready(function() {
-	$("#team1").val(teams[0] + "+");
-	$("#team2").val(teams[1] + "+");
+$(document).ready(function() {
+	$('#team1').val(teams[0] + " +");
+	$('#team2').val(teams[1] + " +");
 	
 	for (let player in players) {
-		$('#playerOfMatch select').append(`<option value="${players[player]}">${player}</option>`);
+            $('#playerOfMatch select').append(`<option value="${player}">${players[player]}</option>`);
 	}
 });
 
@@ -23,5 +23,5 @@ function scoreTeam2() {
 }
 
 function updateScore() {
-	$('#score').html(${team1Score}x${team2Score});
+	$('#score').html(`${team1Score}x${team2Score}`);
 }
